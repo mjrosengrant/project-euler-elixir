@@ -25,7 +25,7 @@ defmodule EulerProblem2 do
   def solve do
     max_num = 4_000_000
 
-    fib_seq_to_max_val(max_num, [])
+    fib_seq_to_max_val(max_num)
     |> Enum.filter(fn x -> rem(x, 2) == 0 && x < max_num end)
     |> Enum.sum()
   end
