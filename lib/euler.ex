@@ -30,7 +30,7 @@ defmodule EulerProblem2 do
     |> Enum.sum()
   end
 
-  def fib_seq_to_max_val(max_val, current_seq \\ []) do
+  defp fib_seq_to_max_val(max_val, current_seq \\ []) do
     len_seq = length(current_seq)
 
     next_val =
@@ -58,13 +58,22 @@ defmodule EulerProblem3 do
   """
   def solve do
     num_to_factor = 600_851_475_143
+    # num_to_factor = 1
 
-    generate(num_to_factor)
-    |> Enum.reduce(&max/2)
+    largest_prime =
+      generate(num_to_factor)
+      |> Enum.reduce(&max/2)
+
+    IO.puts(largest_prime)
   end
 
-  def generate(num) do
-    generate(num, 2, [])
+  defp generate(num) do
+    if num == 1 do
+      # 1 is the only factor of 1
+      generate(num, 2, [1])
+    else
+      generate(num, 2, [])
+    end
   end
 
   defp generate(1, _, acc) do
@@ -80,4 +89,4 @@ defmodule EulerProblem3 do
   end
 end
 
-IO.puts(EulerProblem3.solve())
+EulerProblem3.solve()
