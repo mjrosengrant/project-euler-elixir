@@ -48,5 +48,36 @@ defmodule EulerProblem2 do
   end
 end
 
-# EulerProblem_1.solve
-IO.puts(EulerProblem2.solve())
+defmodule EulerProblem3 do
+  @doc ~S"""
+  The prime factors of 13195 are 5, 7, 13 and 29.
+
+  What is the largest prime factor of the number 600851475143 ?
+
+  Solution source: https://github.com/steven-s/prime_factors_elixir/blob/master/lib/prime_factors.ex
+  """
+  def solve do
+    num_to_factor = 600_851_475_143
+
+    generate(num_to_factor)
+    |> Enum.reduce(&max/2)
+  end
+
+  def generate(num) do
+    generate(num, 2, [])
+  end
+
+  defp generate(1, _, acc) do
+    acc
+  end
+
+  defp generate(num, candidate, acc) when rem(num, candidate) == 0 do
+    generate(div(num, candidate), candidate, [candidate | acc])
+  end
+
+  defp generate(num, candidate, acc) do
+    generate(num, candidate + 1, acc)
+  end
+end
+
+IO.puts(EulerProblem3.solve())
