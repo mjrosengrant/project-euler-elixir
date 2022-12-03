@@ -89,4 +89,51 @@ defmodule EulerProblem3 do
   end
 end
 
-EulerProblem3.solve()
+defmodule EulerProblem4 do
+  @doc """
+  A palindromic number reads the same both ways.
+  The largest palindrome made from the product of
+  two 2-digit numbers is 9009 = 91 × 99.
+
+  Find the largest palindrome made from the product of two 3-digit numbers.
+  """
+  def solve do
+    num_list = Enum.map(999..100, fn x -> check_products(x) end)
+    # IO.inspect(num_list[-1])
+    # if palindrome?(largest_product) do
+    #   factors = factor(largest_product)
+    # else do
+    # end
+
+    # IO.puts(palindrome?(largest_product))
+  end
+
+  defp check_products(num1) do
+    Enum.map((num1 - 1)..100, fn x ->
+      if palindrome?(num1 * x) do
+        IO.puts(to_string(num1) <> " " <> to_string(x) <> " " <> to_string(num1 * x))
+      end
+    end)
+
+    # IO.puts(num1)
+  end
+
+  defp factor(number) do
+    :ignore
+  end
+
+  defp palindrome?(string) do
+    list = string |> to_char_list |> normalize
+    list == :lists.reverse(list)
+  end
+
+  defp normalize(char_list),
+    do: char_list |> Enum.map(&normalize_char/1) |> Enum.reject(&(&1 == :ignore))
+
+  defp normalize_char(char) when char in ?a..?z, do: char
+  defp normalize_char(char) when char in ?0..?9, do: char
+  defp normalize_char(char) when char in ?A..?Z, do: char + ?a - ?A
+  defp normalize_char(_char), do: :ignoreend
+end
+
+EulerProblem4.solve()
