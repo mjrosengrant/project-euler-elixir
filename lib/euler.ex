@@ -98,9 +98,13 @@ defmodule EulerProblem4 do
   Find the largest palindrome made from the product of two 3-digit numbers.
   """
   def solve do
+    n_digit_num = 3
+    {max_val, _} = Integer.parse(String.duplicate("9", n_digit_num))
+    {min_val, _} = Integer.parse("1" <> String.duplicate("0", n_digit_num - 1))
+
     largest_palindrome =
       Enum.map(
-        999..100,
+        max_val..min_val,
         fn x -> find_palindrome_products(x) end
       )
       |> Enum.filter(fn x -> x != [] end)
