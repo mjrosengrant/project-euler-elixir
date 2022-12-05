@@ -136,4 +136,34 @@ defmodule EulerProblem4 do
   end
 end
 
-EulerProblem4.solve()
+defmodule EulerProblem5 do
+  @doc """
+  2520 is the smallest number that can be divided by each of the numbers
+  from 1 to 10 without any remainder.
+
+  What is the smallest positive number that is evenly divisible by all
+  of the numbers from 1 to 20?
+  """
+  def solve(start_num \\ 1) do
+    min_divisor = 1
+    max_divisor = 10
+    range = min_divisor..max_divisor
+
+    if not is_divisible_by_range(start_num, range) do
+      if rem(start_num, 10000) == 0 do
+        IO.puts("checking " <> to_string(start_num))
+      end
+
+      solve(start_num + 1)
+    else
+      IO.puts("ANSWER: " <> to_string(start_num))
+    end
+  end
+
+  def is_divisible_by_range(num, range) do
+    Enum.map(range, fn x -> rem(num, x) end)
+    |> Enum.all?(fn x -> x == 0 end)
+  end
+end
+
+EulerProblem5.solve()
