@@ -146,7 +146,7 @@ defmodule EulerProblem5 do
   """
   def solve(start_num \\ 1) do
     min_divisor = 1
-    max_divisor = 10
+    max_divisor = 19
     range = min_divisor..max_divisor
 
     if not is_divisible_by_range(start_num, range) do
