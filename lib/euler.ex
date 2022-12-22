@@ -150,7 +150,7 @@ defmodule EulerProblem5 do
     range = min_divisor..max_divisor
 
     if not is_divisible_by_range(start_num, range) do
-      if rem(start_num, 10000) == 0 do
+      if rem(start_num, 1_000_000) == 0 do
         IO.puts("checking " <> to_string(start_num))
       end
 
