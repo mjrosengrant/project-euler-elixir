@@ -36,12 +36,19 @@ defmodule AdventOfCode01 do
       total_calories_per_elf
       |> Enum.reduce(&max/2)
 
-    # |> IO.inspect()
-
     elf_with_most_calories = total_calories_per_elf |> Enum.find_index(&(&1 == highest_calories))
     IO.puts("Elf " <> to_string(elf_with_most_calories))
     IO.puts(to_string(highest_calories) <> " Calories")
-    # |> Enum.map(&String.to_integer/1)
+
+    # Find the top three Elves carrying the most Calories.
+    # How many Calories are those Elves carrying in total?
+    top_3_calorie_sum =
+      total_calories_per_elf
+      |> Enum.sort(&(&1 >= &2))
+      |> Enum.slice(0, 3)
+      |> Enum.sum()
+
+    IO.puts("Top 3 elves are carrying " <> to_string(top_3_calorie_sum) <> " calories")
   end
 end
 
