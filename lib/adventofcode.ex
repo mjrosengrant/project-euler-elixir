@@ -98,53 +98,43 @@ defmodule AdventOfCode02 do
       |> Enum.reject(&(&1 == [""]))
 
     round_scores = Enum.map(round_list, &score_round(&1))
-    total_points = Enum.sum(round_scores)
-    IO.puts("SCORE: " <> to_string(total_points))
+    total_score = Enum.sum(round_scores)
+    IO.puts("Pt 1 SCORE: " <> to_string(total_score))
+    pt_2_score = Enum.map(round_list, &score_round_pt_2(&1)) |> Enum.sum()
+    IO.puts("Pt 2 SCORE: " <> to_string(pt_2_score))
   end
 
-  def score_round(pair_list) when pair_list == [@p1_rock, @p2_paper] do
+  def score_round(pair_list) do
     # Paper covers rock, p2 wins
-    @paper_val + @win_val
+    case pair_list do
+      [@p1_rock, @p2_scissors] -> @loss_val + @scissors_val
+      [@p1_rock, @p2_rock] -> @tie_val + @rock_val
+      [@p1_rock, @p2_paper] -> @win_val + @paper_val
+      [@p1_paper, @p2_rock] -> @loss_val + @rock_val
+      [@p1_paper, @p2_paper] -> @tie_val + @paper_val
+      [@p1_paper, @p2_scissors] -> @win_val + @scissors_val
+      [@p1_scissors, @p2_rock] -> @win_val + @rock_val
+      [@p1_scissors, @p2_scissors] -> @tie_val + @scissors_val
+      [@p1_scissors, @p2_paper] -> @loss_val + @paper_val
+    end
   end
 
-  def score_round(pair_list) when pair_list == [@p1_rock, @p2_scissors] do
-    # Rock breaks scissors, p2 loses
-    @scissors_val + @loss_val
-  end
+  def score_round_pt_2(pair_list) do
+    lose = "X"
+    tie = "Y"
+    win = "Z"
 
-  def score_round(pair_list) when pair_list == [@p1_paper, @p2_rock] do
-    # Paper covers rock, p2 loses
-    @rock_val + @loss_val
-  end
-
-  def score_round(pair_list) when pair_list == [@p1_paper, @p2_scissors] do
-    # Scissors cut paper, p2 wins
-    @scissors_val + @win_val
-  end
-
-  def score_round(pair_list) when pair_list == [@p1_scissors, @p2_rock] do
-    # Rock breaks scissors, p2 wins
-    @rock_val + @win_val
-  end
-
-  def score_round(pair_list) when pair_list == [@p1_scissors, @p2_paper] do
-    # Scissors cut paper, p2 loses
-    @paper_val + @loss_val
-  end
-
-  def score_round(pair_list) when pair_list == [@p1_rock, @p2_rock] do
-    # both rock, draw
-    @rock_val + @tie_val
-  end
-
-  def score_round(pair_list) when pair_list == [@p1_paper, @p2_paper] do
-    # both paper, draw
-    @paper_val + @tie_val
-  end
-
-  def score_round(pair_list) when pair_list == [@p1_scissors, @p2_scissors] do
-    # both scissors, draw
-    @scissors_val + @tie_val
+    case pair_list do
+      [@p1_rock, ^lose] -> @loss_val + @scissors_val
+      [@p1_rock, ^tie] -> @tie_val + @rock_val
+      [@p1_rock, ^win] -> @win_val + @paper_val
+      [@p1_paper, ^lose] -> @loss_val + @rock_val
+      [@p1_paper, ^tie] -> @tie_val + @paper_val
+      [@p1_paper, ^win] -> @win_val + @scissors_val
+      [@p1_scissors, ^lose] -> @loss_val + @paper_val
+      [@p1_scissors, ^tie] -> @tie_val + @scissors_val
+      [@p1_scissors, ^win] -> @win_val + @rock_val
+    end
   end
 end
 
