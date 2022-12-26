@@ -158,35 +158,57 @@ defmodule AdventOfCode03 do
   What is the sum of the priorities of those item types?
   """
   def solve do
-    contents =
-      "vJrwpWtwJgWrhcsFMMfFFhFp\njqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL\nPmmdzqPrVvPwwTWBwg\nwMqvLMZHhHMvwLHjbvcjnnSBnvTQFn\nttgJtRGJQctTZtZT\nCrZsJsPPZsGzwwsLwLmpwMDw"
+    # contents =
+    #   "vJrwpWtwJgWrhcsFMMfFFhFp\njqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL\nPmmdzqPrVvPwwTWBwg\nwMqvLMZHhHMvwLHjbvcjnnSBnvTQFn\nttgJtRGJQctTZtZT\nCrZsJsPPZsGzwwsLwLmpwMDw"
 
     {:ok, contents} = File.read("lib/assets/adventofcode_03.txt")
+    part_1(contents)
+    part_2(contents)
+  end
 
+  defp part_1(contents) do
     compartment_contents =
       contents
+      |> String.trim()
       |> String.split("\n")
       |> Enum.map(&String.split_at(&1, Integer.floor_div(String.length(&1), 2)))
 
     common_items = Enum.map(compartment_contents, &find_common_item(&1))
     item_priorities = Enum.map(common_items, &get_item_priority(&1))
-    sum = Enum.sum(item_priorities) |> IO.inspect()
-    # Enum.map(common_items)
+    sum = Enum.sum(item_priorities)
+    IO.puts("PT 1: " <> to_string(sum))
+  end
+
+  defp part_2(contents) do
+    group_lists = String.trim(contents) |> String.split() |> Enum.chunk_every(3)
+    group_sets = Enum.map(group_lists, &List.to_tuple(&1))
+    group_priorities = Enum.map(group_sets, &(find_common_item(&1) |> get_item_priority()))
+    score = Enum.sum(group_priorities)
+    IO.puts("PT 2: " <> to_string(score))
   end
 
   defp find_common_item(compartment_contents) do
-    {comp1, comp2} = compartment_contents
-    comp1_ms = MapSet.new(String.graphemes(comp1))
-    comp2_ms = MapSet.new(String.graphemes(comp2))
-    MapSet.intersection(comp1_ms, comp2_ms) |> MapSet.to_list() |> Enum.at(0)
+    # {comp1, comp2} = compartment_contents
+    mapset_strings =
+      Enum.map(Tuple.to_list(compartment_contents), &MapSet.new(String.graphemes(&1)))
+
+    first_mapset = Enum.at(mapset_strings, 0)
+
+    Enum.reduce(mapset_strings, first_mapset, fn x, acc -> MapSet.intersection(x, acc) end)
+    |> MapSet.to_list()
+    |> Enum.at(0)
+  end
+
+  defp priority_vals do
+    a_z_list = Enum.map(?a..?z, fn x -> <<x::utf8>> end)
+    a_z_list_caps = Enum.map(?A..?Z, fn x -> <<x::utf8>> end)
+    Enum.zip(a_z_list, 1..26) ++ Enum.zip(a_z_list_caps, 27..52)
   end
 
   defp get_item_priority(item_name) do
-    a_z_list = Enum.map(?a..?z, fn x -> <<x::utf8>> end)
-    a_z_list_caps = Enum.map(?A..?Z, fn x -> <<x::utf8>> end)
-    priority_lookup = Enum.zip(a_z_list, 1..26) ++ Enum.zip(a_z_list_caps, 27..52)
+    priority_vals = priority_vals()
 
-    Enum.filter(priority_lookup, fn {letter, val} -> letter == item_name end)
+    Enum.filter(priority_vals, fn {letter, val} -> letter == item_name end)
     |> Enum.at(0)
     |> elem(1)
   end
