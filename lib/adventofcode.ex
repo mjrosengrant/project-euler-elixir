@@ -138,4 +138,58 @@ defmodule AdventOfCode02 do
   end
 end
 
-AdventOfCode02.solve()
+defmodule AdventOfCode03 do
+  @doc ~S"""
+  The Elves have made a list of all of the items currently in each rucksack
+  (your puzzle input), but they need your help finding the errors. Every item
+  type is identified by a single lowercase or uppercase letter
+  (that is, a and A refer to different types of items).
+
+  To help prioritize item rearrangement, every item type can be converted to a priority:
+
+    Lowercase item types a through z have priorities 1 through 26.
+    Uppercase item types A through Z have priorities 27 through 52.
+
+    In the above example, the priority of the item type that appears in both
+    compartments of each rucksack is 16 (p), 38 (L), 42 (P), 22 (v), 20 (t),
+    and 19 (s); the sum of these is 157.
+
+  Find the item type that appears in both compartments of each rucksack.
+  What is the sum of the priorities of those item types?
+  """
+  def solve do
+    contents =
+      "vJrwpWtwJgWrhcsFMMfFFhFp\njqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL\nPmmdzqPrVvPwwTWBwg\nwMqvLMZHhHMvwLHjbvcjnnSBnvTQFn\nttgJtRGJQctTZtZT\nCrZsJsPPZsGzwwsLwLmpwMDw"
+
+    {:ok, contents} = File.read("lib/assets/adventofcode_03.txt")
+
+    compartment_contents =
+      contents
+      |> String.split("\n")
+      |> Enum.map(&String.split_at(&1, Integer.floor_div(String.length(&1), 2)))
+
+    common_items = Enum.map(compartment_contents, &find_common_item(&1))
+    item_priorities = Enum.map(common_items, &get_item_priority(&1))
+    sum = Enum.sum(item_priorities) |> IO.inspect()
+    # Enum.map(common_items)
+  end
+
+  defp find_common_item(compartment_contents) do
+    {comp1, comp2} = compartment_contents
+    comp1_ms = MapSet.new(String.graphemes(comp1))
+    comp2_ms = MapSet.new(String.graphemes(comp2))
+    MapSet.intersection(comp1_ms, comp2_ms) |> MapSet.to_list() |> Enum.at(0)
+  end
+
+  defp get_item_priority(item_name) do
+    a_z_list = Enum.map(?a..?z, fn x -> <<x::utf8>> end)
+    a_z_list_caps = Enum.map(?A..?Z, fn x -> <<x::utf8>> end)
+    priority_lookup = Enum.zip(a_z_list, 1..26) ++ Enum.zip(a_z_list_caps, 27..52)
+
+    Enum.filter(priority_lookup, fn {letter, val} -> letter == item_name end)
+    |> Enum.at(0)
+    |> elem(1)
+  end
+end
+
+AdventOfCode03.solve()
