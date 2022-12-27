@@ -251,11 +251,15 @@ defmodule AdventOfCode04 do
     overlap_freqs = Enum.frequencies(overlaps)
     overlap_count = overlap_freqs.true
 
+    partial_overlaps = Enum.map(assignments, &partial_overlaps?(&1))
+    partial_overlap_freqs = Enum.frequencies(partial_overlaps)
+    partial_overlap_count = partial_overlap_freqs.true
+
     IO.puts("Overlap Count: " <> to_string(overlap_count))
-    # |> Enum.map()
+    IO.puts("Parital Overlap Count: " <> to_string(partial_overlap_count))
   end
 
-  defp overlaps?(assignments_str) do
+  defp parse_range_lists(assignments_str) do
     assignments_list = String.split(assignments_str, ",")
 
     ranges =
@@ -267,9 +271,20 @@ defmodule AdventOfCode04 do
         &Range.new(String.to_integer(Enum.at(&1, 0)), String.to_integer(Enum.at(&1, 1)))
       )
 
-    [rg1, rg2] = Enum.map(ranges, &Enum.to_list(&1))
+    Enum.map(ranges, &Enum.to_list(&1))
+  end
+
+  defp overlaps?(assignments_str) do
+    [rg1, rg2] = parse_range_lists(assignments_str)
     rg1_in_rg2 = Enum.all?(rg1, &Enum.member?(rg2, &1))
     rg2_in_rg1 = Enum.all?(rg2, &Enum.member?(rg1, &1))
+    rg1_in_rg2 or rg2_in_rg1
+  end
+
+  defp partial_overlaps?(assignments_str) do
+    [rg1, rg2] = parse_range_lists(assignments_str)
+    rg1_in_rg2 = Enum.any?(rg1, &Enum.member?(rg2, &1))
+    rg2_in_rg1 = Enum.any?(rg2, &Enum.member?(rg1, &1))
     rg1_in_rg2 or rg2_in_rg1
   end
 end
