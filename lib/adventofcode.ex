@@ -160,7 +160,6 @@ defmodule AdventOfCode03 do
   def solve do
     # contents =
     #   "vJrwpWtwJgWrhcsFMMfFFhFp\njqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL\nPmmdzqPrVvPwwTWBwg\nwMqvLMZHhHMvwLHjbvcjnnSBnvTQFn\nttgJtRGJQctTZtZT\nCrZsJsPPZsGzwwsLwLmpwMDw"
-
     {:ok, contents} = File.read("lib/assets/adventofcode_03.txt")
     part_1(contents)
     part_2(contents)
@@ -214,4 +213,65 @@ defmodule AdventOfCode03 do
   end
 end
 
-AdventOfCode03.solve()
+defmodule AdventOfCode04 do
+  @doc ~S"""
+  consider the following list of section assignment pairs:
+
+  2-4,6-8
+  2-3,4-5
+  5-7,7-9
+  2-8,3-7
+  6-6,4-6
+  2-6,4-8
+
+  For the first few pairs, this list means:
+
+      Within the first pair of Elves, the first Elf was assigned sections 2-4 (sections 2, 3, and 4), while the second Elf was assigned sections 6-8 (sections 6, 7, 8).
+      The Elves in the second pair were each assigned two sections.
+      The Elves in the third pair were each assigned three sections: one got sections 5, 6, and 7, while the other also got 7, plus 8 and 9.
+
+  Some of the pairs have noticed that one of their assignments fully contains
+  the other. For example, 2-8 fully contains 3-7, and 6-6 is fully contained by 4-6.
+  In pairs where one assignment fully contains the other, one Elf in the pair
+  would be exclusively cleaning sections their partner will already be cleaning,
+  so these seem like the most in need of reconsideration. In this example,
+  there are 2 such pairs.
+
+  In how many assignment pairs does one range fully contain the other?
+  """
+  def solve do
+    {:ok, contents} = File.read("lib/assets/adventofcode_04.txt")
+    # contents = "2-4,6-8\n2-3,4-5\n5-7,7-9\n2-8,3-7\n6-6,4-6\n2-6,4-8"
+
+    assignments =
+      String.trim(contents)
+      |> String.split("\n")
+
+    overlaps = Enum.map(assignments, &overlaps?(&1))
+    overlap_freqs = Enum.frequencies(overlaps)
+    overlap_count = overlap_freqs.true
+
+    IO.puts("Overlap Count: " <> to_string(overlap_count))
+    # |> Enum.map()
+  end
+
+  defp overlaps?(assignments_str) do
+    assignments_list = String.split(assignments_str, ",")
+
+    ranges =
+      Enum.map(
+        assignments_list,
+        &String.split(&1, "-")
+      )
+      |> Enum.map(
+        &Range.new(String.to_integer(Enum.at(&1, 0)), String.to_integer(Enum.at(&1, 1)))
+      )
+
+    [rg1, rg2] = Enum.map(ranges, &Enum.to_list(&1))
+    rg1_in_rg2 = Enum.all?(rg1, &Enum.member?(rg2, &1))
+    rg2_in_rg1 = Enum.all?(rg2, &Enum.member?(rg1, &1))
+    rg1_in_rg2 or rg2_in_rg1
+  end
+end
+
+AdventOfCode04.solve()
